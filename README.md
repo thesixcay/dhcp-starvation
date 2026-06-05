@@ -24,6 +24,9 @@ Cuando el servidor DHCP asigna todas las direcciones disponibles, los nuevos cli
 
 # Topología de Red
 
+<img width="441" height="434" alt="photo_2026-06-05_07-37-13" src="https://github.com/user-attachments/assets/4386871b-7dd5-405c-bb36-14c78f1567c8" />
+
+
 # Requisitos
 
 ## Software
